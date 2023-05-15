@@ -1170,7 +1170,7 @@ function hwba2Rgba(h, w, b, a) {
 			preserveAlpha = arrayOrResultType;
 			arrayOrResultType = x;
 		}
-		switch((arguments.length === 1 ? colorspace(color) : cs)||'') {
+		switch(cs||colorspace(color)||'') {
 			case 'lab':
 				return labToRgb(color, arrayOrResultType, preserveAlpha);
 			case 'lch':
@@ -3526,7 +3526,7 @@ function hwba2Rgba(h, w, b, a) {
 	
 	function _getExtColor(sc) {
 		var c, space;
-		if (/^color\(xyz/.test(sc))
+		if (/^color\(display-p3/.test(sc))
 			console.log(sc);
 		if ((c = _labRe.exec(sc))) {
 			var lab = {
