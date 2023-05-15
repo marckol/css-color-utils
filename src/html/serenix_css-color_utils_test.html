@@ -1,0 +1,135 @@
+<html>
+	<head>
+		<style>
+			#new-css-colors {
+				padding: 15px;
+			}
+			th {
+				text-align: left;
+			}
+			td, th {
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+			td:first-child,
+			th:first-child{
+				padding-left: 0px;
+			}
+			td:last-child,
+			th:last-child {
+				padding-right: 0px;
+			}
+			.swatch {
+				position: relative;
+				z-index: 1;
+				display: inline-block;
+				vertical-align: calc(-.1em - 3px);
+				padding: .6em;
+				/*background-color: var(--color);*/
+				border: 3px solid white;
+				border-radius: 3px;
+				box-shadow: 1px 1px 1px rgba(0,0,0,.15)
+			}
+
+			.swatch.oog {
+				border: 2px solid red;
+			}
+
+			.swatch:hover,
+			.swatch:focus {
+				transform: scale(3);
+				border-radius: 2px;
+				transition: .4s;
+				z-index: 2;
+			}
+			
+			.supported {
+				text-align: center;
+				padding: 10px;
+			}
+			
+			.supported.ok {
+				color: green;
+			}
+			.supported.nok {
+				color: red;
+			}
+		</style>
+		<script src="../core/serenix_base.js"></script>
+		<script src="./serenix_color_matrix.js"></script>
+		<script src="./serenix_css_color_utils.js"></script>
+		<script src="./serenix_wcag.js"></script>
+	</head>
+	<body>
+		<h2>CSS Color Module Level 4</h2>
+		
+		<h3>Conversion to RGB with fallback</h3>
+		<div id="new-css-colors"></div>
+		<script>
+			
+			var cssLevel4Colors = [	
+				'lab(29.2345% 39.3825 20.0664)',
+				'lab(52.2345% 40.1645 59.9971)',
+				'lab(60.2345 -5.3654 58.956)',
+				'lab(62.2345% -34.9638 47.7721)',
+				'lab(67.5345% -8.6911 -41.6019)',
+				'lab(29.69% 44.888% -29.04%)',
+				'lch(29.2345% 44.2 27)',
+				'lch(52.2345% 72.2 56.2)',
+				'lch(60.2345 59.2 95.2)',
+				'lch(62.2345% 59.2 126.2)',
+				'lch(67.5345% 42.5 258.2)',
+				'lch(29.69% 45.553% 327.1)',
+				'oklab(40.101% 0.1147 0.0453)',
+				'oklab(59.686% 0.1009 0.1192)',
+				'oklab(0.65125 -0.0320 0.1274)',
+				'oklab(66.016% -0.1084 0.1114)',
+				'oklab(72.322% -0.0465 -0.1150)',
+				'oklab(42.1% 41% -25%)',
+				'oklch(40.101% 0.12332 21.555)',
+				'oklch(59.686% 0.15619 49.7694)',
+				'oklch(0.65125 0.13138 104.097)',
+				'oklch(0.66016 0.15546 134.231)',
+				'oklch(72.322% 0.12403 247.996)',
+				'oklch(42.1% 48.25% 328.4)'
+			];
+			var html = '<table><thead><tr><th colspan="2">Original</th><th colspan="2">RGB conversion</th><th>Supported</th><th colspan="2">Fallback</th></tr></thead><tbody>';
+			var U = SereniX.CssColorUtils;
+			cssLevel4Colors.forEach(function(color) {
+				var rgb = U.toRgbString(U.toRgb(color));
+				html += '<tr><td><span class="swatch" style="background-color:' + color + ';"></span></td><td><span>' 
+					+ color + '</span></td>'
+					+ '<td><span class="swatch" style="background-color:' + rgb + ';"></span></td><td><span>' 
+					+ rgb
+					+ '</span></td><td><span class="supported"></span></td><td><span class="equivalent"></span></td></tr>';
+			})
+			html += '</tbody></table>';
+			var el = document.getElementById("new-css-colors");
+			el.innerHTML = html;
+			var rows = el.children[0].children[1].children;
+			var i = 0;
+			var n = rows.length;
+			var tr, td, s, e, eq;
+			var CCU = SereniX.CssColorUtils;
+			for (; i < n; i++) {
+				tr = rows[i];
+				s = tr.children[0].children[0].style;
+				e = tr.children[4].children[0];
+				if (s.backgroundColor) {
+					e.innerHTML = 'True';
+					e.setAttribute('class', e.getAttribute('class') + ' ok');
+				} else {
+					e.setAttribute('class', e.getAttribute('class') + ' nok');
+					e.innerHTML = 'False';
+					eq = tr.children[5].children[0];
+					eq.setAttribute('class', 'swatch')
+					c = CCU.toColorString(CCU.toColor(tr.children[1].children[0].innerText));
+					eq.style.backgroundColor = c;
+					td = document.createElement('td');
+					td.innerHTML = '<span>' + c + '</span>';
+					tr.appendChild(td);
+				}
+			}
+		</script>
+	</body>
+</html>
